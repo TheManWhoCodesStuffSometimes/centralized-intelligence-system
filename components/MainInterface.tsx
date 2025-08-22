@@ -1,11 +1,10 @@
-
 import React, { useState, useCallback, useRef } from 'react';
 import { User, ChatMessage, AIModel } from '../types';
 import Header from './Header';
 import QuickCommands from './QuickCommands';
 import ChatWindow from './ChatWindow';
 import ChatInput from './ChatInput';
-import { runQueryStream } from '../services/geminiService';
+import { runQueryStream } from '../services/webhookService';
 
 interface MainInterfaceProps {
   user: User;
@@ -33,7 +32,9 @@ const MainInterface: React.FC<MainInterfaceProps> = ({ user, onLogout }) => {
     
     try {
         let fullResponse = '';
-        const stream = runQueryStream(text);
+        // Pass user context to the webhook
+        const stream = runQueryStream(text, user.id, user.role, currentModel);
+        
         for await (const chunk of stream) {
             if (abortControllerRef.current.signal.aborted) {
                 console.log("Stream aborted");
@@ -47,13 +48,13 @@ const MainInterface: React.FC<MainInterfaceProps> = ({ user, onLogout }) => {
     } catch (error) {
         console.error("Error during streaming:", error);
         setMessages(prev => prev.map(msg =>
-            msg.id === modelMessageId ? { ...msg, text: 'Sorry, I encountered an error.' } : msg
+            msg.id === modelMessageId ? { ...msg, text: 'Sorry, I encountered an error connecting to the AI service.' } : msg
         ));
     } finally {
         setIsLoading(false);
         abortControllerRef.current = null;
     }
-  }, [isLoading]);
+  }, [isLoading, user.id, user.role, currentModel]);
 
   const handleQuickCommand = useCallback((prompt: string) => {
     handleSendMessage(prompt);
