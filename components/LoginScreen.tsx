@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User } from '../types';
 
@@ -27,7 +26,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onLogin }) => {
       setError('Invalid password. Please try again.');
     }
   };
-
 
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
@@ -103,15 +101,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ users, onLogin }) => {
           </div>
         </div>
       </div>
-       <style>{`
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fade-in 0.3s ease-out forwards;
-        }
-    `}</style>
     </div>
   );
 };
